@@ -1,7 +1,7 @@
 &nbsp;
 <div align="center">
 
-<img src="icon.png" alt="pyCatan Logo" width="200" style="border-radius:25%"/>
+<img src="assets/512-mac.png" alt="pyCatan Logo" width="200" style="border-radius:25%"/>
 
 # pyCatan
 
