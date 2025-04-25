@@ -1,4 +1,6 @@
+import math
 import os
+import random
 import sys
 
 import dearpygui.dearpygui as dpg
@@ -31,19 +33,35 @@ dpg.create_viewport(title="pyCatan", width=800, height=800, resizable=False)
 
 # create texture registry
 
-image_path = resource_path("assets/test_frog.png")
-width, height, channels, data = dpg.load_image(image_path)
+with dpg.texture_registry(show=False):
+    for tile_type in ["clay", "wheat", "forest", "sheep", "stone", "desert"]:
+        # load the image
+        image_path = resource_path(f"assets/tiles/{tile_type}.png")
+        width, height, channels, data = dpg.load_image(image_path)
 
-with dpg.texture_registry(show=True):
-    dpg.add_static_texture(
-        width=width, height=height, default_value=data, tag="512-mac"
-    )
+        # create a texture registry
+
+        dpg.add_static_texture(
+            width=width, height=height, default_value=data, tag=f"{tile_type}-tile"
+        )
+
+    # load the board image
+    image_path = resource_path("assets/board.png")
+    width, height, channels, data = dpg.load_image(image_path)
+    dpg.add_static_texture(width=width, height=height, default_value=data, tag="board")
 
 with dpg.theme() as transparent_theme:
     with dpg.theme_component(dpg.mvImageButton):
         dpg.add_theme_color(dpg.mvThemeCol_Button, [0, 0, 0, 0])
         dpg.add_theme_color(dpg.mvThemeCol_ButtonActive, [0, 0, 0, 0])
         dpg.add_theme_style(dpg.mvStyleVar_FramePadding, 0, 0)
+        dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, [255, 255, 255, 0])
+
+
+def print_tile_info(sender, app_data):
+    """Print the tile info to the console."""
+    tile_info = dpg.get_item_label(sender)
+    print(f"Tile info: {tile_info}")
 
 
 with dpg.window(
@@ -55,17 +73,55 @@ with dpg.window(
     no_resize=True,
     no_move=True,
     no_title_bar=True,
+    no_scrollbar=True,
+    no_scroll_with_mouse=True,
 ):
-    dpg.add_text("Welcome to pyCatan!")
-    dpg.add_image_button(
-        label="test hex",
-        width=100,
-        height=100,
-        texture_tag="512-mac",
-        callback=lambda: print("test hex clicked"),
-        tag="test_hex",
+
+    dpg.add_image(
+        tag="board2",
+        texture_tag="board",
+        width=800,
+        height=800,
+        pos=(0, 0),
     )
-    dpg.bind_item_theme("test_hex", transparent_theme)
+
+    dpg.add_text("Welcome to pyCatan!")
+
+    tiles = (
+        []
+        + 4 * ["wheat"]
+        + 3 * ["clay"]
+        + 3 * ["stone"]
+        + 4 * ["sheep"]
+        + 4 * ["forest"]
+        + ["desert"]
+    )
+    random.shuffle(tiles)
+
+    for row in range(5):
+
+        offset_y = 70
+        offset_x = 150 + (abs(row - 2) * 50)
+        num_tiles = 5 if row == 2 else 4 if row == 1 or row == 3 else 3
+
+        with dpg.group(horizontal=True):
+            for j in range(num_tiles):
+
+                tile_type = tiles.pop(0)
+
+                x, y = (offset_x + (100 * j), offset_y + (78 * row))
+
+                dpg.add_image_button(
+                    label=f"test hex {row}{j}{tile_type}",
+                    width=100,
+                    height=100,
+                    texture_tag=f"{tile_type}-tile",
+                    callback=print_tile_info,
+                    tag=f"test_hex{row}{j}",
+                    pos=(x, y),
+                )
+
+                dpg.bind_item_theme(f"test_hex{row}{j}", transparent_theme)
 
 
 with dpg.window(
@@ -123,4 +179,5 @@ dpg.set_exit_callback(exit_program)
 dpg.show_viewport()
 while dpg.is_dearpygui_running():
     dpg.render_dearpygui_frame()
+
 dpg.destroy_context()
