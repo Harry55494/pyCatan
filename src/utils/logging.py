@@ -2,6 +2,7 @@ import logging
 import os
 from datetime import datetime
 
+
 class LoggerSetup:
     _instance = None
     _existing_loggers = {}
@@ -22,7 +23,9 @@ class LoggerSetup:
         log_file = os.path.join("logs", f"{datetime.now().strftime('%Y-%m-%d')}.log")
         file_handler = logging.FileHandler(log_file)
         file_handler.setLevel(logging.DEBUG)
-        file_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
+        file_handler.setFormatter(
+            logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+        )
         root_logger.addHandler(file_handler)
 
         # Create a console handler
@@ -30,11 +33,7 @@ class LoggerSetup:
         console_handler.setLevel(logging.INFO)
         console_handler.setFormatter(logging.Formatter("%(levelname)s - %(message)s"))
         root_logger.addHandler(console_handler)
-        self._existing_loggers = {
-            "file": file_handler,
-            "console": console_handler
-        }
-
+        self._existing_loggers = {"file": file_handler, "console": console_handler}
 
     def get_logger(self, name):
         if name not in self._existing_loggers:
