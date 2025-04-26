@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "380ae636263ef39ac4f3d27e823ff1f523cd45c1b7f7eabf8dd5f692d09d2108"
+            "sha256": "e1ad26518fad3aa82c88f04068941d668db3445ec099d45ff545f914f3823779"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -77,6 +77,15 @@
             "markers": "python_version >= '3.8'",
             "version": "==25.0"
         },
+        "pydeps": {
+            "hashes": [
+                "sha256:7c86ee63c9ee6ddd088c840364981c5aa214a994d323bb7fa4724fca30829bee",
+                "sha256:a57415a8fae2ff6840a199b7dfcfecb90c37e4b9b54b58a111808a3440bc03bc"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.8'",
+            "version": "==3.0.1"
+        },
         "pyinstaller": {
             "hashes": [
                 "sha256:38911feec2c5e215e5159a7e66fdb12400168bd116143b54a8a7a37f08733456",
@@ -111,6 +120,14 @@
             ],
             "markers": "python_version >= '3.9'",
             "version": "==79.0.1"
+        },
+        "stdlib-list": {
+            "hashes": [
+                "sha256:9029ea5e3dfde8cd4294cfd4d1797be56a67fc4693c606181730148c3fd1da29",
+                "sha256:95ebd1d73da9333bba03ccc097f5bac05e3aa03e6822a0c0290f87e1047f1857"
+            ],
+            "markers": "python_version >= '3.9'",
+            "version": "==0.11.1"
         }
     },
     "develop": {}

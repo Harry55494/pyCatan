@@ -5,10 +5,12 @@ name = "pypi"
 
 [packages]
 dearpygui = "*"
-pyinstaller = "*"
 appdirs = "*"
 
+
 [dev-packages]
+pydeps = "*"
+pyinstaller = "*"
 
 [requires]
 python_version = "3.12"

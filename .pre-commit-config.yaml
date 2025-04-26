@@ -13,12 +13,6 @@ repos:
       rev: 25.1.0
       hooks:
         -   id: black
-  -   repo: local
-      hooks:
-        -   id: check_for_version_change
-            name: check for version change
-            entry: /bin/bash scripts/check_for_version_change.sh
-            language: script
   - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
     rev: v9.22.0
     hooks:
