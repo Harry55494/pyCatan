@@ -46,6 +46,6 @@ app = BUNDLE(
     coll,
     name='pyCatan.app',
     icon='assets/icon/512-mac.icns',
-    version='0.1.0',
+    version='0.1.1',
     bundle_identifier='com.phillingham.pyCatan',
 )

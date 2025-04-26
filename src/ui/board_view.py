@@ -4,7 +4,7 @@ import dearpygui.dearpygui as dpg
 
 from src.utils.logging import get_logger
 from src.utils.resources import resource_path
-from src.version import get_version_display
+from src.utils.get_version import get_version_display
 
 
 def print_message():

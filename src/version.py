@@ -1,14 +1,3 @@
 VERSION_MAJOR = 0
 VERSION_MINOR = 1
-VERSION_PATCH = 0
-
-VERSION_FULL = f"{VERSION_MAJOR}.{VERSION_MINOR}.{VERSION_PATCH}"
-VERSION_DISPLAY = f"pyCatan {VERSION_FULL}"
-
-
-def get_version():
-    return VERSION_FULL
-
-
-def get_version_display():
-    return VERSION_DISPLAY
+VERSION_PATCH = 1
