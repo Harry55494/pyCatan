@@ -12,4 +12,12 @@
 
 © 2025 HARRISON PHILLINGHAM
 
+---
+
+### Current Progress
+
+<img src="assets/demo/cur_progress.png" alt="Current Progress" width="600"/>
+
+_Date: 26/4/25_
+
 </div>
