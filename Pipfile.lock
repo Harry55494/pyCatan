@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "f041a970e6e79d600c2feacc5fdf0b45d38538eab07bd39c5b7fee9eeaeebc70"
+            "sha256": "380ae636263ef39ac4f3d27e823ff1f523cd45c1b7f7eabf8dd5f692d09d2108"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -23,6 +23,14 @@
                 "sha256:642743b4750de17e655e6711601b077bc6598dbfa3ba5fa2b2a35ce12b508dff"
             ],
             "version": "==0.17.4"
+        },
+        "appdirs": {
+            "hashes": [
+                "sha256:7d5d0167b2b1ba821647616af46a749d1c653740dd0d2415100fe26e27afdf41",
+                "sha256:a841dacd6b99318a741b166adb07e19ee71a274450e68237b4650ca1055ab128"
+            ],
+            "index": "pypi",
+            "version": "==1.4.4"
         },
         "dearpygui": {
             "hashes": [

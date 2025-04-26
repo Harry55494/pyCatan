@@ -4,6 +4,7 @@ import dearpygui.dearpygui as dpg
 
 from src.utils.logging import get_logger
 from src.utils.resources import resource_path
+from src.version import get_version_display
 
 
 def print_message():
@@ -27,7 +28,7 @@ class BoardView:
 
         dpg.create_context()
         dpg.create_viewport(
-            title="pyCatan",
+            title=get_version_display(),
             width=self.display_dimensions[0],
             height=self.display_dimensions[1],
             resizable=False,
@@ -167,16 +168,16 @@ class BoardView:
         width, height = 300, 200
         with dpg.window(
             label="Pause Menu",
-            width=300,
-            height=200,
+            width=width,
+            height=height,
             modal=True,
             tag="Pause Menu",
+            no_move=True,
             pos=(
                 self.display_dimensions[0] // 2 - (width / 2),
                 self.display_dimensions[1] // 2 - (height / 2),
             ),
         ):
-            dpg.add_text("Game Paused")
             dpg.add_button(
                 label="Resume", callback=lambda: dpg.delete_item("Pause Menu")
             )
@@ -203,6 +204,8 @@ class BoardView:
 
                 # Change the texture
                 dpg.configure_item(tag, texture_tag=f"{new_tile_type}-tile")
+                # Change the label
+                dpg.set_item_label(tag, f"test hex {row}{col}{new_tile_type}")
 
                 print(f"Changed {tag} to {new_tile_type}")
 

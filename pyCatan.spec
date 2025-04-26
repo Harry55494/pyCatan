@@ -45,7 +45,7 @@ coll = COLLECT(
 app = BUNDLE(
     coll,
     name='pyCatan.app',
-    icon='assets/logo/512-mac.icns',
-    version='0.0.1',
+    icon='assets/icon/512-mac.icns',
+    version='0.1.0',
     bundle_identifier='com.phillingham.pyCatan',
 )
