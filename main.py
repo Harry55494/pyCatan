@@ -36,7 +36,7 @@ dpg.create_viewport(title="pyCatan", width=800, height=800, resizable=False)
 with dpg.texture_registry(show=False):
     for tile_type in ["clay", "wheat", "forest", "sheep", "stone", "desert"]:
         # load the image
-        image_path = resource_path(f"assets/tiles/{tile_type}.png")
+        image_path = resource_path(f"assets/game/tiles/{tile_type}.png")
         width, height, channels, data = dpg.load_image(image_path)
 
         # create a texture registry
@@ -46,7 +46,7 @@ with dpg.texture_registry(show=False):
         )
 
     # load the board image
-    image_path = resource_path("assets/board.png")
+    image_path = resource_path("assets/game/board.png")
     width, height, channels, data = dpg.load_image(image_path)
     dpg.add_static_texture(width=width, height=height, default_value=data, tag="board")
 
