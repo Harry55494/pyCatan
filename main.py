@@ -5,6 +5,8 @@ import sys
 
 import dearpygui.dearpygui as dpg
 
+from src.game.board import Board
+
 
 def print_message():
     """Print a message to the console."""
@@ -23,7 +25,7 @@ def resource_path(relative_path):
         # PyInstaller creates a temp folder and stores path in _MEIPASS
         base_path = sys._MEIPASS
     except Exception:
-        base_path = os.path.abspath(".")
+        base_path = os.path.abspath("")
 
     return os.path.join(base_path, relative_path)
 
@@ -41,7 +43,7 @@ with dpg.texture_registry(show=False):
 
         # create a texture registry
 
-        dpg.add_static_texture(
+        dpg.add_dynamic_texture(
             width=width, height=height, default_value=data, tag=f"{tile_type}-tile"
         )
 
@@ -85,18 +87,8 @@ with dpg.window(
         pos=(0, 0),
     )
 
-    dpg.add_text("Welcome to pyCatan!")
-
-    tiles = (
-        []
-        + 4 * ["wheat"]
-        + 3 * ["clay"]
-        + 3 * ["stone"]
-        + 4 * ["sheep"]
-        + 4 * ["forest"]
-        + ["desert"]
-    )
-    random.shuffle(tiles)
+    board = Board()
+    tiles = board.tiles
 
     for row in range(5):
 
@@ -109,7 +101,7 @@ with dpg.window(
 
                 tile_type = tiles.pop(0)
 
-                x, y = (offset_x + (100 * j), offset_y + (78 * row))
+                x, y = (offset_x + (100 * j), offset_y + (77 * row))
 
                 dpg.add_image_button(
                     label=f"test hex {row}{j}{tile_type}",
@@ -178,6 +170,34 @@ dpg.setup_dearpygui()
 dpg.set_exit_callback(exit_program)
 dpg.show_viewport()
 while dpg.is_dearpygui_running():
+
+    # choose a random hex based on tag
+
+    if random.random() < 0.02:  # Adjust probability to control frequency
+        # Get a random row and column
+        row = random.randint(0, 4)
+        # Determine max column for the selected row
+        max_col = 4 if row == 2 else 3 if row == 1 or row == 3 else 2
+        col = random.randint(0, max_col)
+
+        # Valid tile tag
+        tag = f"test_hex{row}{col}"
+
+        # Get a random new tile type
+        tile_types = ["clay", "wheat", "forest", "sheep", "stone", "desert"]
+        new_tile_type = random.choice(tile_types)
+
+        # Change the texture
+        dpg.configure_item(
+            tag,
+            texture_tag=f"{new_tile_type}-tile"
+        )
+
+        print(f"Changed {tag} to {new_tile_type}")
+
+
+
+
     dpg.render_dearpygui_frame()
 
 dpg.destroy_context()
