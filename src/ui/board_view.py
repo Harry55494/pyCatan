@@ -2,21 +2,23 @@ import random
 
 import dearpygui.dearpygui as dpg
 
+from src.ui.command_processor import CommandProcessor
+from src.utils.info import get_version_display
 from src.utils.logging import get_logger
 from src.utils.resources import resource_path
-from src.utils.get_version import get_version_display
-
-
-def print_message():
-    """Print a message to the console."""
-    print(f"Command: {dpg.get_value("command_input")}")
-    dpg.set_value("command_input", "")
 
 
 def print_tile_info(sender, app_data):
     """Print the tile info to the console."""
     tile_info = dpg.get_item_label(sender)
     print(f"Tile info: {tile_info}")
+    tile_types = ["clay", "wheat", "forest", "sheep", "stone", "desert"]
+    new_tile_type = random.choice(tile_types)
+
+    # Change the texture
+    dpg.configure_item(sender, texture_tag=f"{new_tile_type}-tile")
+    # Change the label
+    dpg.set_item_label(sender, f"{sender }{new_tile_type}")
 
 
 class BoardView:
@@ -25,6 +27,7 @@ class BoardView:
         self.game_state = game_state
         self.logger.debug("Board view initialised")
         self.display_dimensions = (800, 800)
+        self.command_processor = CommandProcessor(game_state)
 
         dpg.create_context()
         dpg.create_viewport(
@@ -54,6 +57,12 @@ class BoardView:
             width, height, channels, data = dpg.load_image(image_path)
             dpg.add_static_texture(
                 width=width, height=height, default_value=data, tag="board"
+            )
+
+            image_path = resource_path("assets/game/tiles/tile_label.png")
+            width, height, channels, data = dpg.load_image(image_path)
+            dpg.add_static_texture(
+                width=width, height=height, default_value=data, tag="tile_label"
             )
 
         with dpg.theme() as transparent_theme:
@@ -108,6 +117,23 @@ class BoardView:
 
                         dpg.bind_item_theme(f"test_hex{row}{j}", transparent_theme)
 
+                        # also add the label in the center
+
+                        dpg.add_image(
+                            texture_tag="tile_label",
+                            width=25,
+                            height=25,
+                            pos=(x + 37, y + 38),
+                            tag=f"text_bg{row}{j}",
+                        )
+                        # Then add text on top
+                        dpg.add_text(
+                            f"{row}{j}",
+                            pos=(x + 43, y + 40),
+                            tag=f"text_hex{row}{j}",
+                            color=(0, 0, 0),
+                        )
+
         with dpg.window(
             label="Scoring and Game State",
             width=800,
@@ -149,13 +175,13 @@ class BoardView:
             pos=(0, 700),
         ):
             dpg.add_input_text(label="", width=780, tag="command_input")
-            dpg.add_button(label="Send", callback=print_message)
+            dpg.add_button(label="Send", callback=self.process_command)
             dpg.add_button(
                 label="Pause", callback=self.display_pause_menu, pos=(745, 50)
             )
 
         with dpg.handler_registry():
-            dpg.add_key_release_handler(dpg.mvKey_Return, callback=print_message)
+            dpg.add_key_release_handler(dpg.mvKey_Return, callback=self.process_command)
             dpg.add_key_release_handler(
                 dpg.mvKey_Escape, callback=self.display_pause_menu
             )
@@ -183,30 +209,20 @@ class BoardView:
             )
             dpg.add_button(label="Exit", callback=lambda: dpg.stop_dearpygui())
 
+    def process_command(self):
+        """
+        Processes a command
+        """
+        command = dpg.get_value("command_input")
+        self.command_processor.process_command(command)
+        dpg.set_value("command_input", "")
+
     def run(self):
+
+        self.logger.debug("Starting run loop")
+
         while dpg.is_dearpygui_running():
 
-            # choose a random hex based on tag
-
-            if random.random() < 0.05:  # Adjust probability to control frequency
-                # Get a random row and column
-                row = random.randint(0, 4)
-                # Determine max column for the selected row
-                max_col = 4 if row == 2 else 3 if row == 1 or row == 3 else 2
-                col = random.randint(0, max_col)
-
-                # Valid tile tag
-                tag = f"test_hex{row}{col}"
-
-                # Get a random new tile type
-                tile_types = ["clay", "wheat", "forest", "sheep", "stone", "desert"]
-                new_tile_type = random.choice(tile_types)
-
-                # Change the texture
-                dpg.configure_item(tag, texture_tag=f"{new_tile_type}-tile")
-                # Change the label
-                dpg.set_item_label(tag, f"test hex {row}{col}{new_tile_type}")
-
-                print(f"Changed {tag} to {new_tile_type}")
-
             dpg.render_dearpygui_frame()
+
+        self.logger.debug("Run loop exited")
