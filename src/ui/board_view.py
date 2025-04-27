@@ -30,6 +30,7 @@ class BoardView:
         self.command_processor = CommandProcessor(game_state)
 
         dpg.create_context()
+
         dpg.create_viewport(
             title=get_version_display(),
             width=self.display_dimensions[0],
@@ -71,6 +72,11 @@ class BoardView:
                 dpg.add_theme_color(dpg.mvThemeCol_ButtonActive, [0, 0, 0, 0])
                 dpg.add_theme_style(dpg.mvStyleVar_FramePadding, 0, 0)
                 dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, [255, 255, 255, 0])
+
+        with dpg.font_registry():
+            font_notoserif_variable = dpg.add_font(
+                resource_path("assets/fonts/NotoSerif-Variable.ttf"), 15
+            )
 
         with dpg.window(
             label="game_window",
@@ -133,6 +139,7 @@ class BoardView:
                             tag=f"text_hex{row}{j}",
                             color=(0, 0, 0),
                         )
+                        dpg.bind_item_font(f"text_hex{row}{j}", font_notoserif_variable)
 
         with dpg.window(
             label="Scoring and Game State",
