@@ -94,7 +94,7 @@ class BoardView:
                     for j in range(num_tiles):
                         tile_type = board_tiles.pop(0)
 
-                        x, y = (offset_x + (100 * j), offset_y + (77 * row))
+                        x, y = (offset_x + (99 * j), offset_y + (77 * row))
 
                         dpg.add_image_button(
                             label=f"test hex {row}{j}{tile_type}",
