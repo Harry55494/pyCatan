@@ -1,6 +1,6 @@
 import os
 
-from src.utils.get_version import get_version
+from src.utils.info import get_version
 
 cur_version = get_version()
 

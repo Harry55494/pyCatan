@@ -5,6 +5,9 @@ from datetime import datetime
 
 import appdirs
 
+TERMINAL_LOGGING_LEVEL = logging.DEBUG
+FILE_LOGGING_LEVEL = logging.DEBUG
+
 
 class LoggerSetup:
     _instance = None
@@ -35,7 +38,7 @@ class LoggerSetup:
         # Create a file handler
         log_file = os.path.join(log_dir, f"{datetime.now().strftime('%Y-%m-%d')}.log")
         file_handler = logging.FileHandler(log_file)
-        file_handler.setLevel(logging.DEBUG)
+        file_handler.setLevel(FILE_LOGGING_LEVEL)
         file_handler.setFormatter(
             logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
         )
@@ -43,7 +46,7 @@ class LoggerSetup:
 
         # Create a console handler
         console_handler = logging.StreamHandler()
-        console_handler.setLevel(logging.INFO)
+        console_handler.setLevel(TERMINAL_LOGGING_LEVEL)
         console_handler.setFormatter(logging.Formatter("%(levelname)s - %(message)s"))
         root_logger.addHandler(console_handler)
 

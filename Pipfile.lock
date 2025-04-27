@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "e1ad26518fad3aa82c88f04068941d668db3445ec099d45ff545f914f3823779"
+            "sha256": "3faa076558004951aeb024236841d6d74042a07f12836e20c6c982efa3ec657b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -17,13 +17,6 @@
         ]
     },
     "default": {
-        "altgraph": {
-            "hashes": [
-                "sha256:1b5afbb98f6c4dcadb2e2ae6ab9fa994bbb8c1d75f4fa96d340f9437ae454406",
-                "sha256:642743b4750de17e655e6711601b077bc6598dbfa3ba5fa2b2a35ce12b508dff"
-            ],
-            "version": "==0.17.4"
-        },
         "appdirs": {
             "hashes": [
                 "sha256:7d5d0167b2b1ba821647616af46a749d1c653740dd0d2415100fe26e27afdf41",
@@ -60,6 +53,15 @@
             "index": "pypi",
             "markers": "python_version >= '3.8'",
             "version": "==2.0.0"
+        }
+    },
+    "develop": {
+        "altgraph": {
+            "hashes": [
+                "sha256:1b5afbb98f6c4dcadb2e2ae6ab9fa994bbb8c1d75f4fa96d340f9437ae454406",
+                "sha256:642743b4750de17e655e6711601b077bc6598dbfa3ba5fa2b2a35ce12b508dff"
+            ],
+            "version": "==0.17.4"
         },
         "macholib": {
             "hashes": [
@@ -129,6 +131,5 @@
             "markers": "python_version >= '3.9'",
             "version": "==0.11.1"
         }
-    },
-    "develop": {}
+    }
 }
