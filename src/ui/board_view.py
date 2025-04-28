@@ -12,13 +12,6 @@ def print_tile_info(sender, app_data):
     """Print the tile info to the console."""
     tile_info = dpg.get_item_label(sender)
     print(f"Tile info: {tile_info}")
-    tile_types = ["clay", "wheat", "forest", "sheep", "stone", "desert"]
-    new_tile_type = random.choice(tile_types)
-
-    # Change the texture
-    dpg.configure_item(sender, texture_tag=f"{new_tile_type}-tile")
-    # Change the label
-    dpg.set_item_label(sender, f"{sender }{new_tile_type}")
 
 
 class BoardView:
@@ -74,11 +67,13 @@ class BoardView:
                 dpg.add_theme_color(dpg.mvThemeCol_ButtonHovered, [255, 255, 255, 0])
 
         with dpg.font_registry():
-            font_notoserif_variable = dpg.add_font(
-                resource_path("assets/fonts/NotoSerif-Variable.ttf"), 15
+
+            font_notoserif_variable_22 = dpg.add_font(
+                resource_path("assets/fonts/NotoSerif-Variable.ttf"), 22
             )
-            font_notoserif_variable_big = dpg.add_font(
-                resource_path("assets/fonts/NotoSerif-Variable.ttf"), 30
+
+            font_notoserif_variable_28 = dpg.add_font(
+                resource_path("assets/fonts/NotoSerif-Variable.ttf"), 28
             )
             font_notoserif_variable_title = dpg.add_font(
                 resource_path("assets/fonts/NotoSerif-Variable.ttf"), 50
@@ -104,23 +99,27 @@ class BoardView:
                 pos=(0, 0),
             )
 
-            board_tiles = self.game_state.tiles
+            board_tiles = self.game_state.tiles.copy()
             for row in range(5):
 
-                offset_y = 170
-                offset_x = 180 + (abs(row - 2) * 50)
+                offset_y = 125
+                offset_x = 140 + (abs(row - 2) * 61)
                 num_tiles = 5 if row == 2 else 4 if row == 1 or row == 3 else 3
 
                 with dpg.group(horizontal=True):
                     for j in range(num_tiles):
-                        tile_type = board_tiles.pop(0)
 
-                        x, y = (offset_x + (103 * j), offset_y + (85 * row))
+                        placing_tile = board_tiles.pop(0)
+
+                        tile_type = placing_tile.resource
+                        tile_frequency = placing_tile.frequency
+
+                        x, y = (offset_x + (122 * j), offset_y + (100 * row))
 
                         dpg.add_image_button(
                             label=f"test hex {row}{j}{tile_type}",
-                            width=105,
-                            height=113,
+                            width=125,
+                            height=133,
                             texture_tag=f"{tile_type}-tile",
                             callback=print_tile_info,
                             tag=f"test_hex{row}{j}",
@@ -131,21 +130,51 @@ class BoardView:
 
                         # also add the label in the center
 
-                        dpg.add_image(
-                            texture_tag="tile_label",
-                            width=25,
-                            height=25,
-                            pos=(x + 39, y + 43),
-                            tag=f"text_bg{row}{j}",
-                        )
-                        # Then add text on top
-                        dpg.add_text(
-                            f"{row}{j}",
-                            pos=(x + 46, y + 45),
-                            tag=f"text_hex{row}{j}",
-                            color=(0, 0, 0),
-                        )
-                        dpg.bind_item_font(f"text_hex{row}{j}", font_notoserif_variable)
+                        if not placing_tile.dice_number == 7:
+
+                            dpg.add_image(
+                                texture_tag="tile_label",
+                                width=35,
+                                height=35,
+                                pos=(x + 44, y + 48),
+                                tag=f"text_bg{row}{j}",
+                            )
+
+                            dpg.add_text(
+                                str(placing_tile.dice_number),
+                                # Include offset for double digits
+                                pos=(
+                                    x
+                                    + 52
+                                    + (0 if placing_tile.dice_number >= 10 else 5),
+                                    y + 48,
+                                ),
+                                tag=f"text_hex{row}{j}",
+                                color=(
+                                    (255, 0, 0)
+                                    if placing_tile.dice_number in [6, 8]
+                                    else (0, 0, 0)
+                                ),
+                            )
+
+                            dpg.add_text(
+                                "." * tile_frequency,
+                                # Include offset for longer strings
+                                pos=(x + 63 - (3 * tile_frequency), y + 50),
+                                tag=f"dots_hex{row}{j}",
+                                color=(
+                                    (255, 0, 0)
+                                    if placing_tile.dice_number in [6, 8]
+                                    else (0, 0, 0)
+                                ),
+                            )
+
+                            dpg.bind_item_font(
+                                f"text_hex{row}{j}", font_notoserif_variable_22
+                            )
+                            dpg.bind_item_font(
+                                f"dots_hex{row}{j}", font_notoserif_variable_28
+                            )
 
         with dpg.window(
             label="title_window",
@@ -195,11 +224,17 @@ class BoardView:
                     dpg.add_text("")
                     dpg.add_text("Game State")
 
+            with dpg.table(header_row=False):
+                dpg.add_table_column()
+                dpg.add_table_column()
+                dpg.add_table_column()
+                dpg.add_table_column()
+
                 for i in range(4):
                     with dpg.table_row():
+                        dpg.add_text("")
                         dpg.add_text(f"Player {i + 1}")
                         dpg.add_text("Score: 0")
-                        dpg.add_text("Resources: 0")
 
         with dpg.window(
             label="Command Window",
@@ -209,12 +244,23 @@ class BoardView:
             no_collapse=True,
             no_resize=True,
             no_move=True,
+            no_title_bar=True,
             pos=(900, 600),
         ):
-            dpg.add_input_text(label="", width=780, tag="command_input")
+
+            with dpg.table(header_row=False):
+                dpg.add_table_column()
+                dpg.add_table_column()
+                dpg.add_table_column()
+
+                with dpg.table_row():
+                    dpg.add_text("")
+                    dpg.add_text("Command Input")
+
+            dpg.add_input_text(label="", width=280, tag="command_input")
             dpg.add_button(label="Send", callback=self.process_command)
             dpg.add_button(
-                label="Pause", callback=self.display_pause_menu, pos=(50, 50)
+                label="Pause", callback=self.display_pause_menu, pos=(50, 58)
             )
 
         with dpg.handler_registry():

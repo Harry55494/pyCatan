@@ -18,8 +18,8 @@
 
 ### Current Progress
 
-<img src="assets/demo/cur_progress.png" alt="Current Progress" width="600"/>
+<img src="assets/demo/cur_progress.png" alt="Current Progress" width="800"/>
 
-_Date: 26/4/25_
+_Date: 28/4/25_
 
 </div>
