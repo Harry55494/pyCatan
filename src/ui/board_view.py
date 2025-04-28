@@ -3,7 +3,7 @@ import random
 import dearpygui.dearpygui as dpg
 
 from src.ui.command_processor import CommandProcessor
-from src.utils.info import get_version_display
+from src.utils.info import get_version_display, get_version
 from src.utils.logging import get_logger
 from src.utils.resources import resource_path
 
@@ -26,7 +26,7 @@ class BoardView:
         self.logger = get_logger("BoardView")
         self.game_state = game_state
         self.logger.debug("Board view initialised")
-        self.display_dimensions = (800, 800)
+        self.display_dimensions = (1200, 800)
         self.command_processor = CommandProcessor(game_state)
 
         dpg.create_context()
@@ -77,11 +77,17 @@ class BoardView:
             font_notoserif_variable = dpg.add_font(
                 resource_path("assets/fonts/NotoSerif-Variable.ttf"), 15
             )
+            font_notoserif_variable_big = dpg.add_font(
+                resource_path("assets/fonts/NotoSerif-Variable.ttf"), 30
+            )
+            font_notoserif_variable_title = dpg.add_font(
+                resource_path("assets/fonts/NotoSerif-Variable.ttf"), 50
+            )
 
         with dpg.window(
             label="game_window",
-            width=800,
-            height=550,
+            width=900,
+            height=800,
             no_close=True,
             no_collapse=True,
             no_resize=True,
@@ -93,7 +99,7 @@ class BoardView:
             dpg.add_image(
                 tag="board2",
                 texture_tag="board",
-                width=800,
+                width=900,
                 height=800,
                 pos=(0, 0),
             )
@@ -101,20 +107,20 @@ class BoardView:
             board_tiles = self.game_state.tiles
             for row in range(5):
 
-                offset_y = 70
-                offset_x = 150 + (abs(row - 2) * 50)
+                offset_y = 170
+                offset_x = 180 + (abs(row - 2) * 50)
                 num_tiles = 5 if row == 2 else 4 if row == 1 or row == 3 else 3
 
                 with dpg.group(horizontal=True):
                     for j in range(num_tiles):
                         tile_type = board_tiles.pop(0)
 
-                        x, y = (offset_x + (99 * j), offset_y + (77 * row))
+                        x, y = (offset_x + (103 * j), offset_y + (85 * row))
 
                         dpg.add_image_button(
                             label=f"test hex {row}{j}{tile_type}",
-                            width=100,
-                            height=100,
+                            width=105,
+                            height=113,
                             texture_tag=f"{tile_type}-tile",
                             callback=print_tile_info,
                             tag=f"test_hex{row}{j}",
@@ -129,62 +135,86 @@ class BoardView:
                             texture_tag="tile_label",
                             width=25,
                             height=25,
-                            pos=(x + 37, y + 38),
+                            pos=(x + 39, y + 43),
                             tag=f"text_bg{row}{j}",
                         )
                         # Then add text on top
                         dpg.add_text(
                             f"{row}{j}",
-                            pos=(x + 43, y + 40),
+                            pos=(x + 46, y + 45),
                             tag=f"text_hex{row}{j}",
                             color=(0, 0, 0),
                         )
                         dpg.bind_item_font(f"text_hex{row}{j}", font_notoserif_variable)
 
         with dpg.window(
-            label="Scoring and Game State",
-            width=800,
-            height=150,
+            label="title_window",
+            width=300,
+            height=200,
             no_close=True,
             no_collapse=True,
             no_resize=True,
             no_move=True,
             no_title_bar=True,
-            pos=(0, 550),
+            pos=(900, 0),
+        ):
+            dpg.add_text(
+                "pyCatan", pos=(75, 40), color=(255, 255, 255), tag="pyCatan_title"
+            )
+            dpg.add_text(
+                "Version: " + get_version(),
+                pos=(100, 105),
+                color=(255, 255, 255),
+                tag="pyCatan_version",
+            )
+            dpg.add_text(
+                "github.com/Harry55494/pyCatan",
+                pos=(50, 130),
+                color=(255, 255, 255),
+                tag="pyCatan_github",
+            )
+            dpg.bind_item_font("pyCatan_title", font_notoserif_variable_title)
+
+        with dpg.window(
+            label="Scoring and Game State",
+            width=300,
+            height=400,
+            no_close=True,
+            no_collapse=True,
+            no_resize=True,
+            no_move=True,
+            no_title_bar=True,
+            pos=(900, 200),
         ):
             with dpg.table(header_row=False):
-                dpg.add_table_column()
-                dpg.add_table_column()
                 dpg.add_table_column()
                 dpg.add_table_column()
                 dpg.add_table_column()
 
                 with dpg.table_row():
                     dpg.add_text("")
-                    dpg.add_text("")
                     dpg.add_text("Game State")
 
                 for i in range(4):
                     with dpg.table_row():
-                        dpg.add_text("")
                         dpg.add_text(f"Player {i + 1}")
                         dpg.add_text("Score: 0")
                         dpg.add_text("Resources: 0")
 
         with dpg.window(
             label="Command Window",
-            width=800,
-            height=100,
+            width=300,
+            height=200,
             no_close=True,
             no_collapse=True,
             no_resize=True,
             no_move=True,
-            pos=(0, 700),
+            pos=(900, 600),
         ):
             dpg.add_input_text(label="", width=780, tag="command_input")
             dpg.add_button(label="Send", callback=self.process_command)
             dpg.add_button(
-                label="Pause", callback=self.display_pause_menu, pos=(745, 50)
+                label="Pause", callback=self.display_pause_menu, pos=(50, 50)
             )
 
         with dpg.handler_registry():
