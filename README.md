@@ -7,7 +7,7 @@
 
 ### A Python GUI Implementation of Catan
 
-### Part of the <a href="https://gitea.phillingham.com/Harrison/Conquerors-of-Catan">Conquerors of Catan</a> Project
+### Part of the <a href="https://github.com/Harry55494/Conquerors-of-Catan">Conquerors of Catan</a> Project
 
 
 &nbsp; 🌾 &nbsp; 🌲&nbsp; 🐑&nbsp; 🧱 &nbsp; 🪨  &nbsp; &nbsp; &nbsp; ❔
