@@ -1,5 +1,6 @@
-from src.version import *
 import warnings
+
+from src.version import *
 
 
 def get_ascii_title():

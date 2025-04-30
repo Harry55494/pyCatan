@@ -22,6 +22,11 @@ class BoardView:
         self.display_dimensions = (1200, 800)
         self.command_processor = CommandProcessor(game_state)
 
+        self.touch_targets_vertices = [[250, 145], [200, 240]]
+        self.touch_targets_vertices_active = False
+
+        self.touch_targets_hexes = []
+
         dpg.create_context()
 
         dpg.create_viewport(
@@ -90,6 +95,7 @@ class BoardView:
             no_title_bar=True,
             no_scrollbar=True,
             no_scroll_with_mouse=True,
+            tag="game_window",
         ):
             dpg.add_image(
                 tag="board2",
@@ -116,12 +122,11 @@ class BoardView:
 
                         x, y = (offset_x + (122 * j), offset_y + (100 * row))
 
-                        dpg.add_image_button(
+                        dpg.add_image(
                             label=f"test hex {row}{j}{tile_type}",
                             width=125,
                             height=133,
                             texture_tag=f"{tile_type}-tile",
-                            callback=print_tile_info,
                             tag=f"test_hex{row}{j}",
                             pos=(x, y),
                         )
@@ -176,6 +181,8 @@ class BoardView:
                                 f"dots_hex{row}{j}", font_notoserif_variable_28
                             )
 
+            self.add_touch_targets_vertices()
+
         with dpg.window(
             label="title_window",
             width=300,
@@ -188,11 +195,11 @@ class BoardView:
             pos=(900, 0),
         ):
             dpg.add_text(
-                "pyCatan", pos=(75, 40), color=(255, 255, 255), tag="pyCatan_title"
+                "pyCatan", pos=(80, 40), color=(255, 255, 255), tag="pyCatan_title"
             )
             dpg.add_text(
                 "Version: " + get_version(),
-                pos=(100, 105),
+                pos=(108, 105),
                 color=(255, 255, 255),
                 tag="pyCatan_version",
             )
@@ -292,6 +299,41 @@ class BoardView:
             )
             dpg.add_button(label="Exit", callback=lambda: dpg.stop_dearpygui())
 
+    def add_touch_targets_vertices(self):
+        """
+        Adds touch targets to the board
+        """
+
+        self.logger.debug("Adding vertex touch targets to the board")
+
+        self.touch_targets_vertices_active = True
+
+        def callback(sender, app_data):
+            self.logger.debug(f"Touch target {sender} clicked")
+            self.remove_touch_targets_vertices()
+            self.touch_targets_vertices_active = False
+            return sender
+
+        for x, y in self.touch_targets_vertices:
+            dpg.add_image_button(
+                label=f"touch_target{x}{y}",
+                width=30,
+                height=30,
+                texture_tag="tile_label",
+                callback=callback,
+                tag=f"touch_target{x}{y}",
+                pos=(x, y),
+                parent="game_window",
+            )
+
+    def remove_touch_targets_vertices(self):
+        """
+        Removes touch targets from the board
+        """
+        self.logger.debug("Removing vertex touch targets from the board")
+        for x, y in self.touch_targets_vertices:
+            dpg.delete_item(f"touch_target{x}{y}")
+
     def process_command(self):
         """
         Processes a command
@@ -305,6 +347,9 @@ class BoardView:
         self.logger.debug("Starting run loop")
 
         while dpg.is_dearpygui_running():
+
+            if random.random() < 0.001 and not self.touch_targets_vertices_active:
+                self.add_touch_targets_vertices()
 
             dpg.render_dearpygui_frame()
 
