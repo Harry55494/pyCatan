@@ -5,6 +5,9 @@ class Tile:
         self.resource = resource
         self.dice_number = dice_number
         self.texture = texture
+        self.center_x = 0
+        self.center_y = 0
+
         self.frequency = (
             5
             if dice_number == 6 or dice_number == 8

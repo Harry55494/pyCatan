@@ -51,7 +51,6 @@ class Board:
             10,
             9,
             11,
-            7,
             3,
             8,
             8,
@@ -72,6 +71,11 @@ class Board:
             random.shuffle(self.box_numbers)
 
         for i in range(len(self.box_tiles)):
+
+            if self.box_tiles[i] == "desert":
+                # insert a 7
+                self.box_numbers.insert(i, 7)
+
             self.tiles.append(
                 Tile(
                     x=0,
