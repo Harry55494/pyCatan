@@ -1,12 +1,13 @@
 import random
 
-from src.game.tile import Tile
+from src.mvc.events import GameEvent
+from src.board.tile import Tile
 from src.utils.logging import get_logger
 
 
-class Board:
+class BoardModel:
 
-    def __init__(self, setup_method="default"):
+    def __init__(self, events_manager, setup_method="default"):
         """
         Initialises a board object
         """
@@ -14,6 +15,7 @@ class Board:
         # Set up the logger
         self.logger = get_logger("Board")
         self.logger.debug("Initialising board")
+        self.event_manager = events_manager
 
         self.tiles = []
 
@@ -85,3 +87,27 @@ class Board:
                     texture="",
                 )
             )
+
+    def change_random_tile(self):
+        """
+        Changes a random tile to a desert tile
+        :return: None
+        """
+        self.logger.debug("Changing random tile to random other tile")
+        # Get a random tile
+        random_tile = random.choice(self.tiles)
+        # Get a random resource
+        random_resource = random.choice(self.box_tiles)
+        # Get a random number
+        random_number = random.choice(self.box_numbers)
+
+        # Change the tile
+        random_tile.resource = random_resource
+        random_tile.dice_number = random_number
+        random_tile.contains_robber = False
+
+    def move_piece(self):
+        print("Moving piece")
+        self.event_manager.dispatch(
+            GameEvent.TILE_CHANGED, {"piece": "Knight", "position": (1, 2)}
+        )

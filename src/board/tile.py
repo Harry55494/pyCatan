@@ -31,3 +31,11 @@ class Tile:
     def __str__(self):
         # Override the string representation of the tile, for printing to the console
         return f"Tile({self.x}, {self.y}, {self.resource}, {self.dice_number})"
+
+
+if __name__ == "__main__":
+    # Example usage
+    tile = Tile(0, 0, "wheat", 8, "texture")
+    print(tile)
+    print(f"Tile frequency: {tile.frequency}")
+    print(f"Tile contains robber: {tile.contains_robber}")

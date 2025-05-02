@@ -2,31 +2,28 @@ import random
 
 import dearpygui.dearpygui as dpg
 
-from src.ui.command_processor import CommandProcessor
+from src.mvc.events import GameEvent
 from src.utils.info import get_version_display, get_version
 from src.utils.logging import get_logger
 from src.utils.resources import resource_path
 
 
-def print_tile_info(sender, app_data):
-    """Print the tile info to the console."""
-    tile_info = dpg.get_item_label(sender)
-    print(f"Tile info: {tile_info}")
-
-
 class BoardView:
-    def __init__(self, game_state):
-        self.logger = get_logger("BoardView")
-        self.game_state = game_state
-        self.logger.debug("Board view initialised")
-        self.display_dimensions = (1200, 800)
-        self.command_processor = CommandProcessor(game_state)
+    def __init__(self, events_manager):
+        self.logger = get_logger("MVC-View")
+        self.events_manager = events_manager
+
+        self.events_manager.subscribe(GameEvent.TILE_CHANGED, self.tile_changed)
 
         self.touch_targets_vertices = [[250, 145], [200, 240]]
         self.touch_targets_vertices_active = False
 
         self.touch_targets_hexes = []
+        self.touch_targets_hexes_active = False
 
+        self.display_dimensions = (1200, 800)
+
+    def setup_window(self, starting_state):
         dpg.create_context()
 
         dpg.create_viewport(
@@ -105,14 +102,14 @@ class BoardView:
                 pos=(0, 0),
             )
 
-            board_tiles = self.game_state.tiles.copy()
+            board_tiles = starting_state.tiles
             for row in range(5):
 
                 offset_y = 125
                 offset_x = 140 + (abs(row - 2) * 61)
                 num_tiles = 5 if row == 2 else 4 if row == 1 or row == 3 else 3
 
-                with dpg.group(horizontal=True):
+                with dpg.group(horizontal=True, tag=f"row{row}"):
                     for j in range(num_tiles):
 
                         placing_tile = board_tiles.pop(0)
@@ -136,7 +133,6 @@ class BoardView:
                         # also add the label in the center
 
                         if not placing_tile.dice_number == 7:
-
                             dpg.add_image(
                                 texture_tag="tile_label",
                                 width=35,
@@ -181,7 +177,7 @@ class BoardView:
                                 f"dots_hex{row}{j}", font_notoserif_variable_28
                             )
 
-            self.add_touch_targets_vertices()
+                            self.touch_targets_hexes.append([x + 44, y + 48])
 
         with dpg.window(
             label="title_window",
@@ -265,15 +261,8 @@ class BoardView:
                     dpg.add_text("Command Input")
 
             dpg.add_input_text(label="", width=280, tag="command_input")
-            dpg.add_button(label="Send", callback=self.process_command)
             dpg.add_button(
                 label="Pause", callback=self.display_pause_menu, pos=(50, 58)
-            )
-
-        with dpg.handler_registry():
-            dpg.add_key_release_handler(dpg.mvKey_Return, callback=self.process_command)
-            dpg.add_key_release_handler(
-                dpg.mvKey_Escape, callback=self.display_pause_menu
             )
 
         dpg.setup_dearpygui()
@@ -299,58 +288,17 @@ class BoardView:
             )
             dpg.add_button(label="Exit", callback=lambda: dpg.stop_dearpygui())
 
-    def add_touch_targets_vertices(self):
-        """
-        Adds touch targets to the board
-        """
+    def tile_changed(self, data):
 
-        self.logger.debug("Adding vertex touch targets to the board")
+        row, column = random.randint(0, 4), random.randint(0, 4)
 
-        self.touch_targets_vertices_active = True
+        num_tiles_in_row = [3, 4, 5, 4, 3]  # Number of tiles in each row
 
-        def callback(sender, app_data):
-            self.logger.debug(f"Touch target {sender} clicked")
-            self.remove_touch_targets_vertices()
-            self.touch_targets_vertices_active = False
-            return sender
+        if row < 0 or row >= 5 or column < 0 or column >= num_tiles_in_row[row]:
+            return None
 
-        for x, y in self.touch_targets_vertices:
-            dpg.add_image_button(
-                label=f"touch_target{x}{y}",
-                width=30,
-                height=30,
-                texture_tag="tile_label",
-                callback=callback,
-                tag=f"touch_target{x}{y}",
-                pos=(x, y),
-                parent="game_window",
-            )
+        # Retrieve the tile using the tag
+        tile_tag = f"test_hex{row}{column}"
 
-    def remove_touch_targets_vertices(self):
-        """
-        Removes touch targets from the board
-        """
-        self.logger.debug("Removing vertex touch targets from the board")
-        for x, y in self.touch_targets_vertices:
-            dpg.delete_item(f"touch_target{x}{y}")
-
-    def process_command(self):
-        """
-        Processes a command
-        """
-        command = dpg.get_value("command_input")
-        self.command_processor.process_command(command)
-        dpg.set_value("command_input", "")
-
-    def run(self):
-
-        self.logger.debug("Starting run loop")
-
-        while dpg.is_dearpygui_running():
-
-            if random.random() < 0.001 and not self.touch_targets_vertices_active:
-                self.add_touch_targets_vertices()
-
-            dpg.render_dearpygui_frame()
-
-        self.logger.debug("Run loop exited")
+        dpg.configure_item(tile_tag, texture_tag=f"{data}-tile")
+        return None
