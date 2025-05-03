@@ -15,7 +15,7 @@ class BoardView:
 
         self.events_manager.subscribe(GameEvent.TILE_CHANGED, self.tile_changed)
 
-        self.touch_targets_vertices = [[250, 145], [200, 240]]
+        self.touch_targets_vertices = [["touch_1", 250, 145], ["touch_2", 200, 240]]
         self.touch_targets_vertices_active = False
 
         self.touch_targets_hexes = []
@@ -177,7 +177,9 @@ class BoardView:
                                 f"dots_hex{row}{j}", font_notoserif_variable_28
                             )
 
-                            self.touch_targets_hexes.append([x + 44, y + 48])
+                            self.touch_targets_hexes.append(
+                                [f"touch_hex_{placing_tile.id}", x + 44, y + 48]
+                            )
 
         with dpg.window(
             label="title_window",
@@ -288,47 +290,57 @@ class BoardView:
             )
             dpg.add_button(label="Exit", callback=lambda: dpg.stop_dearpygui())
 
-    def add_touch_targets_vertices(self):
+    def add_touch_targets(self, type_="vertex"):
         """
         Adds touch targets to the board
         """
 
-        self.logger.debug("Adding vertex touch targets to the board")
+        self.logger.debug(f"Adding {type_} touch targets to the board")
 
-        if self.touch_targets_vertices_active:
+        if self.touch_targets_vertices_active or self.touch_targets_hexes_active:
             self.logger.debug("Touch targets already active, removing them")
-            self.remove_touch_targets_vertices()
+            self.remove_touch_targets()
             self.touch_targets_vertices_active = False
+            self.touch_targets_hexes_active = False
             raise
 
-        self.touch_targets_vertices_active = True
+        if type_ == "hex":
+            self.touch_targets_hexes_active = True
+            self.touch_targets_vertices_active = False
+            targets = self.touch_targets_hexes
+
+        else:
+            self.touch_targets_vertices_active = True
+            self.touch_targets_hexes_active = False
+            targets = self.touch_targets_vertices
 
         def callback(sender, app_data):
             self.logger.debug(f"Touch target {sender} clicked")
-            self.remove_touch_targets_vertices()
+            self.remove_touch_targets()
             self.touch_targets_vertices_active = False
+            self.touch_targets_hexes_active = False
             self.events_manager.dispatch(GameEvent.TOUCH_TARGET_CHOSEN, sender)
             return sender
 
-        for x, y in self.touch_targets_vertices:
+        for tag, x, y in targets:
             dpg.add_image_button(
                 label=f"touch_target{x}{y}",
                 width=30,
                 height=30,
                 texture_tag="tile_label",
                 callback=callback,
-                tag=f"touch_target{x}{y}",
+                tag=tag,
                 pos=(x, y),
                 parent="game_window",
             )
 
-    def remove_touch_targets_vertices(self):
+    def remove_touch_targets(self):
         """
         Removes touch targets from the board
         """
-        self.logger.debug("Removing vertex touch targets from the board")
-        for x, y in self.touch_targets_vertices:
-            dpg.delete_item(f"touch_target{x}{y}")
+        self.logger.debug("Removing touch targets from the board")
+        for tag in self.touch_targets_vertices + self.touch_targets_hexes:
+            dpg.delete_item(tag[0])
 
     def tile_changed(self, data):
         tile_id, resource, dice_number = (

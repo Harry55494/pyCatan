@@ -88,32 +88,35 @@ class BoardModel:
                 )
             )
 
-    def change_random_tile(self):
+    def change_tile(self, target_id=None):
         """
         Changes a random tile to a desert tile
         :return: None
         """
-        self.logger.debug("Changing random tile to random other tile")
-        # Get a random tile
-        random_tile = random.choice(self.tiles)
+
+        if target_id is None:
+            tile = random.choice(self.tiles)
+        else:
+            tile = [t for t in self.tiles if t.id == target_id][0]
+
         # Get a random resource
         random_resource = random.choice(self.box_tiles)
         # Get a random resource that is not the same as the current tile
-        while random_resource == random_tile.resource:
+        while random_resource == tile.resource:
             random_resource = random.choice(self.box_tiles)
         # Get a random number
         random_number = random.choice(self.box_numbers)
 
         # Change the tile
-        random_tile.resource = random_resource
-        random_tile.dice_number = random_number
-        random_tile.contains_robber = False
+        tile.resource = random_resource
+        tile.dice_number = random_number
+        tile.contains_robber = False
 
         # Dispatch the event
         self.event_manager.dispatch(
             GameEvent.TILE_CHANGED,
             {
-                "tile": random_tile.id,
+                "tile": tile.id,
                 "resource": random_resource,
                 "dice_number": random_number,
             },

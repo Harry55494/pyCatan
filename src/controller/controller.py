@@ -62,13 +62,16 @@ class BoardController:
 
             # Game loop
 
-            if random.random() < 0.01 and not self.view.touch_targets_vertices_active:
+            if (
+                random.random() < 0.01
+                and not self.view.touch_targets_vertices_active
+                and not self.view.touch_targets_hexes_active
+            ):
                 # Simulate a game event
 
                 def change_random(chosen_target):
-                    print(chosen_target)
-                    if chosen_target == "touch_target200240":
-                        self.model.change_random_tile()
+                    chosen_target = chosen_target.replace("touch_hex_", "")
+                    self.model.change_tile(chosen_target)
                     self.events_manager.unsubscribe(
                         GameEvent.TOUCH_TARGET_CHOSEN, change_random
                     )
@@ -77,7 +80,7 @@ class BoardController:
                     GameEvent.TOUCH_TARGET_CHOSEN, change_random
                 )
 
-                self.view.add_touch_targets_vertices()
+                self.view.add_touch_targets("hex")
 
             render_frame()
 
