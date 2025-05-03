@@ -1,7 +1,7 @@
 import random
 
-from src.mvc.events import GameEvent
 from src.board.tile import Tile
+from src.controller.events import GameEvent
 from src.utils.logging import get_logger
 
 

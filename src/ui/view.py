@@ -2,7 +2,7 @@ import random
 
 import dearpygui.dearpygui as dpg
 
-from src.mvc.events import GameEvent
+from src.controller.events import GameEvent
 from src.utils.info import get_version_display, get_version
 from src.utils.logging import get_logger
 from src.utils.resources import resource_path
@@ -288,6 +288,47 @@ class BoardView:
             )
             dpg.add_button(label="Exit", callback=lambda: dpg.stop_dearpygui())
 
+    def add_touch_targets_vertices(self):
+        """
+        Adds touch targets to the board
+        """
+
+        self.logger.debug("Adding vertex touch targets to the board")
+
+        if self.touch_targets_vertices_active:
+            self.logger.debug("Touch targets already active, removing them")
+            self.remove_touch_targets_vertices()
+            self.touch_targets_vertices_active = False
+            return
+
+        self.touch_targets_vertices_active = True
+
+        def callback(sender, app_data):
+            self.logger.debug(f"Touch target {sender} clicked")
+            self.remove_touch_targets_vertices()
+            self.touch_targets_vertices_active = False
+            return sender
+
+        for x, y in self.touch_targets_vertices:
+            dpg.add_image_button(
+                label=f"touch_target{x}{y}",
+                width=30,
+                height=30,
+                texture_tag="tile_label",
+                callback=callback,
+                tag=f"touch_target{x}{y}",
+                pos=(x, y),
+                parent="game_window",
+            )
+
+    def remove_touch_targets_vertices(self):
+        """
+        Removes touch targets from the board
+        """
+        self.logger.debug("Removing vertex touch targets from the board")
+        for x, y in self.touch_targets_vertices:
+            dpg.delete_item(f"touch_target{x}{y}")
+
     def tile_changed(self, data):
 
         row, column = random.randint(0, 4), random.randint(0, 4)
@@ -302,3 +343,7 @@ class BoardView:
 
         dpg.configure_item(tile_tag, texture_tag=f"{data}-tile")
         return None
+
+
+def render_frame():
+    dpg.render_dearpygui_frame()

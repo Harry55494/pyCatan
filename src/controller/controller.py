@@ -3,7 +3,8 @@ import random
 import dearpygui.dearpygui as dpg
 
 import src.ui.view
-from src.mvc.events import EventManager, GameEvent
+from src.ui.view import render_frame
+from src.controller.events import EventManager
 from src.utils.logging import get_logger
 
 
@@ -41,7 +42,7 @@ class BoardController:
         self.view = view
         self.logger.debug("View set")
 
-    def setup(self):
+    def initialise_game(self):
         """
         Set up the game
         :return:
@@ -59,8 +60,13 @@ class BoardController:
 
         while dpg.is_dearpygui_running():
 
-            if random.random() < 0.1:
-                new_tile = random.choice(self.model.box_tiles)
-                self.events_manager.dispatch(GameEvent.TILE_CHANGED, new_tile)
+            # Game loop
 
-            dpg.render_dearpygui_frame()
+            if random.random() < 0.005 and not self.view.touch_targets_vertices_active:
+                # Simulate a game event
+
+                self.view.add_touch_targets_vertices()
+
+            render_frame()
+
+        self.logger.debug("Game ended")

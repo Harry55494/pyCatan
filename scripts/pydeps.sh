@@ -11,4 +11,4 @@ then
     exit
 fi
 
-python3 -m pydeps ../src -T png -o dependencies.png --rmprefix src. --rankdir LR --cluster --keep-target-cluster --exclude-exact src.ui src.game src.utils
+python3 -m pydeps ../src -T png -o dependencies.png --rmprefix src. --rankdir LR --cluster --keep-target-cluster --exclude-exact src.ui src.mvc src.board src.utils
