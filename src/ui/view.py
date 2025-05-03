@@ -124,11 +124,11 @@ class BoardView:
                             width=125,
                             height=133,
                             texture_tag=f"{tile_type}-tile",
-                            tag=f"test_hex{row}{j}",
+                            tag=f"hex_{placing_tile.id}",
                             pos=(x, y),
                         )
 
-                        dpg.bind_item_theme(f"test_hex{row}{j}", transparent_theme)
+                        dpg.bind_item_theme(f"hex_{placing_tile.id}", transparent_theme)
 
                         # also add the label in the center
 
@@ -331,23 +331,13 @@ class BoardView:
             dpg.delete_item(f"touch_target{x}{y}")
 
     def tile_changed(self, data):
-        tile, resource, dice_number = (
+        tile_id, resource, dice_number = (
             data["tile"],
             data["resource"],
             data["dice_number"],
         )
 
-        row, column = random.randint(0, 4), random.randint(0, 4)
-
-        num_tiles_in_row = [3, 4, 5, 4, 3]  # Number of tiles in each row
-
-        if row < 0 or row >= 5 or column < 0 or column >= num_tiles_in_row[row]:
-            return None
-
-        # Retrieve the tile using the tag
-        tile_tag = f"test_hex{row}{column}"
-
-        dpg.configure_item(tile_tag, texture_tag=f"{resource}-tile")
+        dpg.configure_item(f"hex_{tile_id}", texture_tag=f"{resource}-tile")
         return None
 
 

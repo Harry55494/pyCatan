@@ -1,7 +1,11 @@
+import uuid
+
+
 class Tile:
     def __init__(self, x: int, y: int, resource: str, dice_number: int, texture: str):
         self.x = x
         self.y = y
+        self.id = uuid.uuid4()
         self.resource = resource
         self.dice_number = dice_number
         self.texture = texture

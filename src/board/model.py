@@ -98,6 +98,9 @@ class BoardModel:
         random_tile = random.choice(self.tiles)
         # Get a random resource
         random_resource = random.choice(self.box_tiles)
+        # Get a random resource that is not the same as the current tile
+        while random_resource == random_tile.resource:
+            random_resource = random.choice(self.box_tiles)
         # Get a random number
         random_number = random.choice(self.box_numbers)
 
@@ -110,7 +113,7 @@ class BoardModel:
         self.event_manager.dispatch(
             GameEvent.TILE_CHANGED,
             {
-                "tile": random_tile,
+                "tile": random_tile.id,
                 "resource": random_resource,
                 "dice_number": random_number,
             },

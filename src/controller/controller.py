@@ -62,7 +62,7 @@ class BoardController:
 
             # Game loop
 
-            if random.random() < 0.005 and not self.view.touch_targets_vertices_active:
+            if random.random() < 0.01 and not self.view.touch_targets_vertices_active:
                 # Simulate a game event
 
                 def change_random(chosen_target):
