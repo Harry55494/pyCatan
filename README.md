@@ -7,7 +7,7 @@
 
 ### A Python GUI Implementation of Catan
 
-### Part of the <a href="https://gitea.phillingham.com/Harrison/Conquerors-of-Catan">Conquerors of Catan</a> Project
+### Part of the <a href="https://github.com/Harry55494/Conquerors-of-Catan">Conquerors of Catan</a> Project
 
 
 &nbsp; 🌾 &nbsp; 🌲&nbsp; 🐑&nbsp; 🧱 &nbsp; 🪨  &nbsp; &nbsp; &nbsp; ❔
@@ -18,8 +18,8 @@
 
 ### Current Progress
 
-<img src="assets/demo/cur_progress.png" alt="Current Progress" width="600"/>
+<img src="assets/demo/cur_progress.png" alt="Current Progress" width="800"/>
 
-_Date: 26/4/25_
+_Date: 28/4/25_
 
 </div>

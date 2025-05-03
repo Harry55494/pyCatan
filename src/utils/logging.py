@@ -5,6 +5,34 @@ from datetime import datetime
 
 import appdirs
 
+TERMINAL_LOGGING_LEVEL = logging.DEBUG
+FILE_LOGGING_LEVEL = logging.DEBUG
+
+
+class DebugFilenameFormatter(logging.Formatter):
+    """
+    Custom formatter that includes filename information only for DEBUG level logs.
+    For other levels, it uses a standard format.
+    """
+
+    def __init__(self, trace=False):
+        # Format for non-DEBUG logs
+        self.standard_formatter = logging.Formatter("%(levelname)s - %(message)s")
+        # Format for DEBUG logs
+        if trace:
+            self.debug_formatter = logging.Formatter(
+                "%(levelname)s - %(message)s [TRACE: %(filename)s - l %(lineno)d]"
+            )
+        else:
+            self.debug_formatter = logging.Formatter("%(levelname)s - %(message)s")
+
+    def format(self, record):
+        # Use debug formatter if record is at DEBUG level
+        if record.levelno == logging.DEBUG:
+            return self.debug_formatter.format(record)
+        else:
+            return self.standard_formatter.format(record)
+
 
 class LoggerSetup:
     _instance = None
@@ -35,7 +63,7 @@ class LoggerSetup:
         # Create a file handler
         log_file = os.path.join(log_dir, f"{datetime.now().strftime('%Y-%m-%d')}.log")
         file_handler = logging.FileHandler(log_file)
-        file_handler.setLevel(logging.DEBUG)
+        file_handler.setLevel(FILE_LOGGING_LEVEL)
         file_handler.setFormatter(
             logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
         )
@@ -43,8 +71,8 @@ class LoggerSetup:
 
         # Create a console handler
         console_handler = logging.StreamHandler()
-        console_handler.setLevel(logging.INFO)
-        console_handler.setFormatter(logging.Formatter("%(levelname)s - %(message)s"))
+        console_handler.setLevel(TERMINAL_LOGGING_LEVEL)
+        console_handler.setFormatter(DebugFilenameFormatter())
         root_logger.addHandler(console_handler)
 
         # Store handlers separately from loggers

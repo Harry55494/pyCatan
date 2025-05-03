@@ -2,7 +2,7 @@
 
 
 a = Analysis(
-    ['main.py'],
+    ['src/__main__.py'],
     pathex=[],
     binaries=[],
     datas=[('assets', 'assets')],
@@ -46,6 +46,6 @@ app = BUNDLE(
     coll,
     name='pyCatan.app',
     icon='assets/icon/512-mac.icns',
-    version='0.1.2',
+    version='0.1.3',
     bundle_identifier='com.phillingham.pyCatan',
 )
