@@ -102,7 +102,7 @@ class BoardView:
                 pos=(0, 0),
             )
 
-            board_tiles = starting_state.tiles
+            board_tiles = starting_state.tiles.copy()
             for row in range(5):
 
                 offset_y = 125
@@ -299,7 +299,7 @@ class BoardView:
             self.logger.debug("Touch targets already active, removing them")
             self.remove_touch_targets_vertices()
             self.touch_targets_vertices_active = False
-            return
+            raise
 
         self.touch_targets_vertices_active = True
 
@@ -307,6 +307,7 @@ class BoardView:
             self.logger.debug(f"Touch target {sender} clicked")
             self.remove_touch_targets_vertices()
             self.touch_targets_vertices_active = False
+            self.events_manager.dispatch(GameEvent.TOUCH_TARGET_CHOSEN, sender)
             return sender
 
         for x, y in self.touch_targets_vertices:
@@ -330,6 +331,11 @@ class BoardView:
             dpg.delete_item(f"touch_target{x}{y}")
 
     def tile_changed(self, data):
+        tile, resource, dice_number = (
+            data["tile"],
+            data["resource"],
+            data["dice_number"],
+        )
 
         row, column = random.randint(0, 4), random.randint(0, 4)
 
@@ -341,7 +347,7 @@ class BoardView:
         # Retrieve the tile using the tag
         tile_tag = f"test_hex{row}{column}"
 
-        dpg.configure_item(tile_tag, texture_tag=f"{data}-tile")
+        dpg.configure_item(tile_tag, texture_tag=f"{resource}-tile")
         return None
 
 

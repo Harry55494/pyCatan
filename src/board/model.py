@@ -106,6 +106,16 @@ class BoardModel:
         random_tile.dice_number = random_number
         random_tile.contains_robber = False
 
+        # Dispatch the event
+        self.event_manager.dispatch(
+            GameEvent.TILE_CHANGED,
+            {
+                "tile": random_tile,
+                "resource": random_resource,
+                "dice_number": random_number,
+            },
+        )
+
     def move_piece(self):
         print("Moving piece")
         self.event_manager.dispatch(

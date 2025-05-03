@@ -3,8 +3,8 @@ import random
 import dearpygui.dearpygui as dpg
 
 import src.ui.view
+from src.controller.events import EventManager, GameEvent
 from src.ui.view import render_frame
-from src.controller.events import EventManager
 from src.utils.logging import get_logger
 
 
@@ -56,7 +56,7 @@ class BoardController:
         Run the game
         :return:
         """
-        self.logger.debug("Running game")
+        self.logger.debug("Beginning run loop")
 
         while dpg.is_dearpygui_running():
 
@@ -64,6 +64,18 @@ class BoardController:
 
             if random.random() < 0.005 and not self.view.touch_targets_vertices_active:
                 # Simulate a game event
+
+                def change_random(chosen_target):
+                    print(chosen_target)
+                    if chosen_target == "touch_target200240":
+                        self.model.change_random_tile()
+                    self.events_manager.unsubscribe(
+                        GameEvent.TOUCH_TARGET_CHOSEN, change_random
+                    )
+
+                self.events_manager.subscribe(
+                    GameEvent.TOUCH_TARGET_CHOSEN, change_random
+                )
 
                 self.view.add_touch_targets_vertices()
 
