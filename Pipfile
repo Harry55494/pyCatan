@@ -6,10 +6,12 @@ name = "pypi"
 [packages]
 dearpygui = "*"
 appdirs = "*"
+mermaid-py = "*"
 
 [dev-packages]
 pydeps = "*"
 pyinstaller = "*"
+mermaid-py = "*"
 
 [requires]
 python_version = "3.12"
