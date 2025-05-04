@@ -7,6 +7,7 @@ import appdirs
 
 TERMINAL_LOGGING_LEVEL = logging.DEBUG
 FILE_LOGGING_LEVEL = logging.DEBUG
+TRACE = False
 
 
 class DebugFilenameFormatter(logging.Formatter):
@@ -15,13 +16,14 @@ class DebugFilenameFormatter(logging.Formatter):
     For other levels, it uses a standard format.
     """
 
-    def __init__(self, trace=False):
+    def __init__(self, trace=TRACE):
         # Format for non-DEBUG logs
+        super().__init__()
         self.standard_formatter = logging.Formatter("%(levelname)s - %(message)s")
         # Format for DEBUG logs
         if trace:
             self.debug_formatter = logging.Formatter(
-                "%(levelname)s - %(message)s [TRACE: %(filename)s - l %(lineno)d]"
+                "[TRACE: %(filename)-15s - line %(lineno)-3s] - %(levelname)s - %(message)s "
             )
         else:
             self.debug_formatter = logging.Formatter("%(levelname)s - %(message)s")
