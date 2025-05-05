@@ -5,6 +5,7 @@ from src.utils.logging import get_logger
 
 
 class GameEvent(enum.Enum):
+    PHASE_CHANGED = "game_phase_changed"
     TILE_CHANGED = "tile_changed"
     TOUCH_TARGET_CHOSEN = "touch_target_chosen"
     # Add more events as needed

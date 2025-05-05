@@ -1,4 +1,5 @@
 from src.board.model import BoardModel
+from src.board.state import GameState
 from src.controller.controller import BoardController
 from src.controller.events import EventManager
 from src.ui.view import BoardView
@@ -20,9 +21,11 @@ if __name__ == "__main__":
     board = BoardModel(events_manager)
     view = BoardView(events_manager)
     controller = BoardController(events_manager)
+    state = GameState(events_manager)
 
     controller.set_model(board)
     controller.set_view(view)
+    controller.set_state(state)
     controller.initialise_game()
 
     controller.run()

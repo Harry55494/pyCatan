@@ -1,5 +1,3 @@
-import random
-
 import dearpygui.dearpygui as dpg
 
 from src.controller.events import GameEvent

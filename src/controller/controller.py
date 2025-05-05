@@ -3,6 +3,7 @@ import random
 import dearpygui.dearpygui as dpg
 
 import src.ui.view
+from src.board.state import GamePhase
 from src.controller.events import EventManager, GameEvent
 from src.ui.view import render_frame
 from src.utils.logging import get_logger
@@ -18,6 +19,7 @@ class BoardController:
 
         self.view = None
         self.model = None
+        self.state = None
         self.logger = get_logger("MVC-Controller")
 
         self.logger.debug("Performing initialisation")
@@ -42,6 +44,15 @@ class BoardController:
         self.view = view
         self.logger.debug("View set")
 
+    def set_state(self, state):
+        """
+        Set the state for the game
+        :param state:
+        :return:
+        """
+        self.state = state
+        self.logger.debug("State set")
+
     def initialise_game(self):
         """
         Set up the game
@@ -62,8 +73,11 @@ class BoardController:
 
             # Game loop
 
+            if self.state.current_game_phase == GamePhase.SETUP:
+                print("Setup phase")
+
             if (
-                random.random() < 0.01
+                random.random() < 0.1
                 and not self.view.touch_targets_vertices_active
                 and not self.view.touch_targets_hexes_active
             ):
@@ -79,6 +93,8 @@ class BoardController:
                 self.events_manager.subscribe(
                     GameEvent.TOUCH_TARGET_CHOSEN, change_random
                 )
+
+                self.events_manager.dispatch(GameEvent.PHASE_CHANGED, GamePhase.PLAY)
 
                 self.view.add_touch_targets("hex")
 
